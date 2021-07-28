@@ -2,6 +2,7 @@
 import pygame
 import random
 from pygame import mixer
+from dice.dice import throw_dice
 # ----------------------------------------------------------------------------------------------------------------------
 # initialising the pygame module
 pygame.init()
@@ -9,12 +10,12 @@ game_screen = pygame.display.set_mode((900, 700)) # creating a gamescreen of 900
 game_state = "running"
 # setting the caption and icon - this will be displayed in the top left corner of the window
 pygame.display.set_caption("Snake & Ladder")
-icon = pygame.image.load("snake and ladder icon.png")
+icon = pygame.image.load("images/snake and ladder icon.png")
 pygame.display.set_icon(icon)
 # setting the background image
-background_image = pygame.image.load("snake and ladder board.jpg")
+background_image = pygame.image.load("images/snake and ladder board.jpg")
 # arrow that point to the current player playing900, 700
-arrow = pygame.image.load("arrow.png")
+arrow = pygame.image.load("images/arrow.png")
 # players are global so we can use them from anywhere
 # global player1, player2
 player1 = 0
@@ -22,34 +23,13 @@ player2 = 0
 # dictionary of where sankes and ladder are
 snake = {51: 11, 56: 15, 62: 57, 92: 53, 98: 8} # key represent head of snake and corresponding value represent its tail
 ladder = {2: 38, 4: 14, 9: 31, 33: 85, 52: 88, 80: 99} # key,value pair represents bottom and top of ladder respectively
-# ----------------------------------------------------------------------------------------------------------------------
-# loading the dice onto the display
-def throw_dice():
-    dice_roll = mixer.Sound('dice_roll.mp3') # whenever dice is rolled this sound plays
-    dice_roll.play()
-    num = random.randint(1, 6)
-    if num == 1:
-        dice = pygame.image.load("1.png")
-    elif num == 2:
-        dice = pygame.image.load("2.png")
-    elif num == 3:
-        dice = pygame.image.load("3.png")
-    elif num == 4:
-        dice = pygame.image.load("4.png")
-    elif num == 5:
-        dice = pygame.image.load("5.png")
-    elif num == 6:
-        dice = pygame.image.load("6.png")
-    return (dice, num)
-# ----------------------------------------------------------------------------------------------------------------------
 # ______________________________________________________________________________________________________________________
 # this will display player 1 and player 2 at the corresponding locations
 def display_players_text():
     # setting up the players
-    p1 = pygame.font.Font("freesansbold.ttf", 32)
-    p2 = pygame.font.Font("freesansbold.ttf", 32)
-    p1_text = p1.render("PLAYER 1", True, (255, 0, 0))
-    p2_text = p2.render("PLAYER 2", True, (0, 0, 255))
+    p = pygame.font.Font("freesansbold.ttf", 32)
+    p1_text = p.render("PLAYER 1", True, (255, 0, 0))
+    p2_text = p.render("PLAYER 2", True, (0, 0, 255))
     game_screen.blit(p1_text, (745, 420)) # blit helps is displaying onto the screen i.e. blitting
     game_screen.blit(p2_text, (745, 560))
 # ----------------------------------------------------------------------------------------------------------------------
@@ -63,27 +43,17 @@ def show_arrow(chance):
 # ----------------------------------------------------------------------------------------------------------------------
 # ______________________________________________________________________________________________________________________
 # where to move a player onto the screen
-def move_on_board(player_number, direc, x, y):  # need to return x and y coordinate of player
-    if player_number == 1:
-        if direc == "left":
-            x -= 70
-        elif direc == "right":
-            x += 70
-        elif direc == "up":
-            y -= 70
-        elif direc == "down":  # down
-            y += 70
-        return x, y
-    if player_number == 2:
-        if direc == "left":
-            x -= 70
-        elif direc == "right":
-            x += 70
-        elif direc == "up":
-            y -= 70
-        elif direc == "down":  # down
-            y += 70
-        return x, y
+def move_on_board(direc, x, y):  # need to return x and y coordinate of player
+    if direc == "left":
+        x -= 70
+    elif direc == "right":
+        x += 70
+    elif direc == "up":
+        y -= 70
+    elif direc == "down":  # down
+        y += 70
+    return x, y
+    
 # ______________________________________________________________________________________________________________________
 # showing the players
 def show_current_players(p_img, px1, py1, px2, py2):
@@ -102,8 +72,7 @@ for i in range(10):
 
 # ______________________________________________________________________________________________________________________
 # moving the player on the board and return the x and y coordinate of the player to be  moved
-def move_player(player_no, count,
-                ls_cord):  # count can be +ve as well as -ve depending upon whether player wants to move ahead or behind
+def move_player(player_no, count,ls_cord):  # count can be +ve as well as -ve depending upon whether player wants to move ahead or behind
     # ls_cord = [px1, py1, px2, py2]
     if count == 0:
         if player_no == 1:
@@ -112,92 +81,66 @@ def move_player(player_no, count,
             return ls_cord[2], ls_cord[3]
     global dir
     global player1, player2
-    if player_no == 1:
-        if count < 0:
-            # can move in "left, right or down" direction
-            while count != 0:
-                direction = "----"
-                if (player1 % 10) == 1:
-                    direction = "down"
-                else:
-                    for i in range(10):
-                        if player1 <= dir[i][1]:
-                            direction = dir[i][3]
-                            break
+    player=player1
+    if player_no != 1:
+        ls_cord[0], ls_cord[1]=ls_cord[2], ls_cord[3]
+        player=player2
+    if count < 0:
+        # can move in "left, right or down" direction
+        while count != 0:
+            direction = "----"
+            if (player % 10) == 1:
+                direction = "down"
+            else:
+                for i in range(10):
+                    if player <= dir[i][1]:
+                        direction = dir[i][3]
+                        break
 
-                print(direction, end=" ")
-                ls_cord[0], ls_cord[1] = move_on_board(1, direction, ls_cord[0], ls_cord[1])  # left right or down
-                player1 -= 1
-                count += 1
-            print()
-            return ls_cord[0], ls_cord[1]
-        else:  # for count > 0
-            if player1 + count > 100:
-                return ls_cord[0], ls_cord[1]
-            while count != 0:
-                direction = "----"
-                if (player1 % 10) == 0:
-                    direction = "up"
-                else:
-                    for i in range(10):
-                        if player1 < dir[i][1]:
-                            direction = dir[i][2]
-                            break
-                print(direction, end=" ")
-                ls_cord[0], ls_cord[1] = move_on_board(1, direction, ls_cord[0], ls_cord[1])  # left right or up
-                player1 += 1
-                count -= 1
-            print()
-            return ls_cord[0], ls_cord[1]
-
-    else:  # for player no. 2
-        if count < 0:
-            # "left, right or down"
-            while count != 0:
-                direction = "----"
-                if (player2 % 10) == 1:
-                    direction = "down"
-                else:
-                    for i in range(10):
-                        if player2 <= dir[i][1]:
-                            direction = dir[i][3]
-                            break
-                print(direction, end=" ")
-                ls_cord[2], ls_cord[3] = move_on_board(2, direction, ls_cord[2], ls_cord[3])  # left right or up
-                player2 -= 1
-                count += 1
-            print()
-            return ls_cord[2], ls_cord[3]
-
+            print(direction, end=" ")
+            ls_cord[0], ls_cord[1] = move_on_board(direction, ls_cord[0], ls_cord[1])  # left right or down
+            player -= 1
+            count += 1
+        print()
+        if player_no != 1:
+            player2=player
         else:
-            if player2 + count > 100:
-                return ls_cord[2], ls_cord[3]
-            # left right or up
-            while count != 0:
-                direction = "----"
-                if (player2 % 10) == 0:
-                    direction = "up"
-                else:
-                    for i in range(10):
-                        if player2 < dir[i][1]:
-                            direction = dir[i][2]
-                            break
-                print(direction, end=" ")
-                ls_cord[2], ls_cord[3] = move_on_board(2, direction, ls_cord[2], ls_cord[3])  # left right or up
-                player2 += 1
-                count -= 1
-            print()
-            return ls_cord[2], ls_cord[3]
+            player1=player
+        return ls_cord[0], ls_cord[1]
+    else:  # for count > 0
+        if player + count > 100:
+            return ls_cord[0], ls_cord[1]
+        while count != 0:
+            direction = "----"
+            if (player % 10) == 0:
+                direction = "up"
+            else:
+                for i in range(10):
+                    if player < dir[i][1]:
+                        direction = dir[i][2]
+                        break
+            print(direction, end=" ")
+            ls_cord[0], ls_cord[1] = move_on_board(direction, ls_cord[0], ls_cord[1])  # left right or up
+            player += 1
+            count -= 1
+        print()
+        if player_no != 1:
+            player2=player
+        else:
+            player1=player
+        return ls_cord[0], ls_cord[1]
+
+    
 # ----------------------------------------------------------------------------------------------------------------------
 # ______________________________________________________________________________________________________________________
 # creating a button which will be pressed to invoke throw_dice() function
 button = pygame.Rect(720, 200, 152, 62)
-button_img = pygame.image.load("throw_dice.png")
-DICE, num = pygame.image.load("1.png"), 1
+button_img = pygame.image.load("images/throw_dice.png")
+DICE, num = pygame.image.load("dice/1.png"), 1
 chance = 0  # initially first player will have the chance to play the game:      0-> first    1->second
 continuous_chances = 0  # player can play maximum of 3 changes in a row under certain condition
 current_sum = 0 # maximum sum can be 17
-player_img = [pygame.image.load("player1.png"), pygame.image.load("player2.png")]
+player_img = [pygame.image.load("images/player1.png"), pygame.image.load("images/player2.png")]
 on_the_board = [False, False]  # are players on the board?
 px1 = 750
 py1 = 350
@@ -247,28 +190,30 @@ while game_state == "running":
                     current_sum = num
                     continuous_chances = 0
                     # print(1 + chance, current_sum)
-                # curr_sum = 0
+                # current_sum = 0
                 # while True:
-                #     if curr_sum==18:
-                #         curr_sum=0
+                #     if current_sum==18:
+                #         continuous_chances=0
+                #         current_sum=0
                 #         break
                 #     if num!=6:
-                #         curr_sum+=num
+                #         current_sum+=num
                 #         break
-                #     curr_sum+=6
+                #     current_sum+=6
+                #     continuous_chances+=1
 
                 # this means current player 1 is on the board and is ready to move (not in middle of throwing dice)
                 if chance == 0 and on_the_board[chance] == True and continuous_chances == 0:
                     px1, py1 = move_player(1, current_sum, [px1, py1, px2, py2])
                     if player1 == 100:
                         player1_wins = True
-                        winning = mixer.Sound("winning_sound.mp3")
+                        winning = mixer.Sound("audio/winning_sound.mp3")
                         winning.play()
                         break
                     current_sum = player1
                     #  if there is snake bite for player 1
                     if player1 in snake.keys():
-                        danger_snake = mixer.Sound('snake_bite_danger.mp3')
+                        danger_snake = mixer.Sound('audio/snake_bite_danger.mp3')
                         danger_snake.play()
                         snake_bite = True
                         print("snake bite for player 1 at pos " + str(current_sum))
@@ -281,7 +226,7 @@ while game_state == "running":
                         snake_bite = False
                     # if there is ladder up for player 1
                     if player1 in ladder.keys():
-                        ladder_sound = mixer.Sound('ladder_up.mp3')
+                        ladder_sound = mixer.Sound('audio/ladder_up.mp3')
                         ladder_sound.play()
                         px1, py1 = move_player(1, ladder[player1] - current_sum, [px1, py1, px2, py2])
                         ladder_up = True
@@ -294,14 +239,14 @@ while game_state == "running":
                     px2, py2 = move_player(2, current_sum, [px1, py1, px2, py2])
                     if (player2 == 100):
                         player2_wins = True
-                        winning = mixer.Sound("winning_sound.mp3")
+                        winning = mixer.Sound("audio/winning_sound.mp3")
                         winning.play()
                         break
                     current_sum = player2
                     # if there is a snake bite for player 2
                     if player2 in snake.keys():
                         snake_bite = True
-                        danger_snake = mixer.Sound('snake_bite_danger.mp3')
+                        danger_snake = mixer.Sound('audio/snake_bite_danger.mp3')
                         danger_snake.play()
                         print("snake bite for player 2 at pos " + str(current_sum))
                         print(snake[player2] - current_sum)
@@ -316,7 +261,7 @@ while game_state == "running":
                         snake_bite = False
                     # if there is ladder present for player 2
                     if player2 in ladder.keys():
-                        ladder_sound = mixer.Sound('ladder_up.mp3')
+                        ladder_sound = mixer.Sound('audio/ladder_up.mp3')
                         ladder_sound.play()
                         px2, py2 = move_player(2, ladder[player2] - current_sum, [px1, py1, px2, py2])
                         ladder_up = True
@@ -335,7 +280,7 @@ while game_state == "running":
                     py1 = 630
                     px1, py1 = move_player(1, current_sum, [px1, py1, px2, py2])
                     if player1 in ladder.keys():
-                        ladder_sound = mixer.Sound('ladder_up.mp3')
+                        ladder_sound = mixer.Sound('audio/ladder_up.mp3')
                         ladder_sound.play()
                         px1, py1 = move_player(1, ladder[player1] - player1, [px1, py1, px2, py2])
                         ladder_up = True
@@ -348,7 +293,7 @@ while game_state == "running":
                     py2 = 655
                     px2, py2 = move_player(2, current_sum, [px1, py1, px2, py2])
                     if player2 in ladder.keys():
-                        ladder_sound = mixer.Sound('ladder_up.mp3')
+                        ladder_sound = mixer.Sound('audio/ladder_up.mp3')
                         ladder_sound.play()
                         px2, py2 = move_player(2, ladder[player2] - player2, [px1, py1, px2, py2])
                         ladder_up = True
