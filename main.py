@@ -1,4 +1,6 @@
 # importing the pygame module along with other modules
+import time
+
 import pygame
 import random
 from pygame import mixer
@@ -72,7 +74,7 @@ for i in range(10):
 
 # ______________________________________________________________________________________________________________________
 # moving the player on the board and return the x and y coordinate of the player to be  moved
-def move_player(player_no, count,ls_cord):  # count can be +ve as well as -ve depending upon whether player wants to move ahead or behind
+def move_player(player_no, count,ls_cord, player_image):  # count can be +ve as well as -ve depending upon whether player wants to move ahead or behind
     # ls_cord = [px1, py1, px2, py2]
     if count == 0:
         if player_no == 1:
@@ -83,8 +85,8 @@ def move_player(player_no, count,ls_cord):  # count can be +ve as well as -ve de
     global player1, player2
     player=player1
     if player_no != 1:
-        ls_cord[0], ls_cord[1]=ls_cord[2], ls_cord[3]
-        player=player2
+        ls_cord[0], ls_cord[1] = ls_cord[2], ls_cord[3]
+        player = player2
     if count < 0:
         # can move in "left, right or down" direction
         while count != 0:
@@ -99,6 +101,9 @@ def move_player(player_no, count,ls_cord):  # count can be +ve as well as -ve de
 
             print(direction, end=" ")
             ls_cord[0], ls_cord[1] = move_on_board(direction, ls_cord[0], ls_cord[1])  # left right or down
+            game_screen.blit(player_image[player_no - 1], (ls_cord[0], ls_cord[1]))
+            pygame.display.update()
+            time.sleep(0.1)
             player -= 1
             count += 1
         print()
@@ -121,6 +126,9 @@ def move_player(player_no, count,ls_cord):  # count can be +ve as well as -ve de
                         break
             print(direction, end=" ")
             ls_cord[0], ls_cord[1] = move_on_board(direction, ls_cord[0], ls_cord[1])  # left right or up
+            game_screen.blit(player_image[player_no -1],( ls_cord[0], ls_cord[1]))
+            pygame.display.update()
+            time.sleep(0.1)
             player += 1
             count -= 1
         print()
@@ -156,6 +164,7 @@ snake_bite_font = pygame.font.Font("freesansbold.ttf", 64)
 snake_bite_text = snake_bite_font.render("! ! Snake Bite ! !", True, (255, 0, 0))
 ladder_font = pygame.font.Font("freesansbold.ttf", 64)
 ladder_up_text = ladder_font.render(" ! ! LADDER UP ! !", True, (0, 255, 0))
+back_player = pygame.image.load("png/back_player.png")
 snake_bite = False
 ladder_up = False
 # ----------------------------------------------------------------------------------------------------------------------
@@ -204,7 +213,7 @@ while game_state == "running":
 
                 # this means current player 1 is on the board and is ready to move (not in middle of throwing dice)
                 if chance == 0 and on_the_board[chance] == True and continuous_chances == 0:
-                    px1, py1 = move_player(1, current_sum, [px1, py1, px2, py2])
+                    px1, py1 = move_player(1, current_sum, [px1, py1, px2, py2], player_img)
                     if player1 == 100:
                         player1_wins = True
                         winning = mixer.Sound("audio/winning_sound.mp3")
@@ -219,7 +228,7 @@ while game_state == "running":
                         print("snake bite for player 1 at pos " + str(current_sum))
                         # print(snake[player1] - current_sum)
                         # print("before = ", px1, py1)
-                        px1, py1 = move_player(1, snake[player1] - current_sum, [px1, py1, px2, py2])
+                        px1, py1 = move_player(1, snake[player1] - current_sum, [px1, py1, px2, py2], player_img)
                         # print("after = ", px1, py1)
                         # print(player1)
                     else:
@@ -228,7 +237,7 @@ while game_state == "running":
                     if player1 in ladder.keys():
                         ladder_sound = mixer.Sound('audio/ladder_up.mp3')
                         ladder_sound.play()
-                        px1, py1 = move_player(1, ladder[player1] - current_sum, [px1, py1, px2, py2])
+                        px1, py1 = move_player(1, ladder[player1] - current_sum, [px1, py1, px2, py2], player_img)
                         ladder_up = True
                     else:
                         ladder_up = False
@@ -236,7 +245,7 @@ while game_state == "running":
 
                 # this means current player 2 is on the board and is ready to move (not in middle of throwing dice)
                 elif chance == 1 and on_the_board[chance] == True and continuous_chances == 0:
-                    px2, py2 = move_player(2, current_sum, [px1, py1, px2, py2])
+                    px2, py2 = move_player(2, current_sum, [px1, py1, px2, py2], player_img)
                     if (player2 == 100):
                         player2_wins = True
                         winning = mixer.Sound("audio/winning_sound.mp3")
@@ -251,7 +260,7 @@ while game_state == "running":
                         print("snake bite for player 2 at pos " + str(current_sum))
                         print(snake[player2] - current_sum)
                         print("before = ", px2, py2)
-                        px2, py2 = move_player(2, snake[player2] - current_sum, [px1, py1, px2, py2])
+                        px2, py2 = move_player(2, snake[player2] - current_sum, [px1, py1, px2, py2], player_img)
                         print("after = ", px2, py2)
                         print(player2)
                         if player2 == 100:
@@ -263,7 +272,7 @@ while game_state == "running":
                     if player2 in ladder.keys():
                         ladder_sound = mixer.Sound('audio/ladder_up.mp3')
                         ladder_sound.play()
-                        px2, py2 = move_player(2, ladder[player2] - current_sum, [px1, py1, px2, py2])
+                        px2, py2 = move_player(2, ladder[player2] - current_sum, [px1, py1, px2, py2], player_img)
                         ladder_up = True
                     else:
                         ladder_up = False
@@ -278,11 +287,11 @@ while game_state == "running":
                     player1 = 1
                     px1 = 10
                     py1 = 630
-                    px1, py1 = move_player(1, current_sum, [px1, py1, px2, py2])
+                    px1, py1 = move_player(1, current_sum, [px1, py1, px2, py2], player_img)
                     if player1 in ladder.keys():
                         ladder_sound = mixer.Sound('audio/ladder_up.mp3')
                         ladder_sound.play()
-                        px1, py1 = move_player(1, ladder[player1] - player1, [px1, py1, px2, py2])
+                        px1, py1 = move_player(1, ladder[player1] - player1, [px1, py1, px2, py2], player_img)
                         ladder_up = True
                     else:
                         ladder_up = False
@@ -291,11 +300,11 @@ while game_state == "running":
                     player2 = 1
                     px2 = 10
                     py2 = 655
-                    px2, py2 = move_player(2, current_sum, [px1, py1, px2, py2])
+                    px2, py2 = move_player(2, current_sum, [px1, py1, px2, py2], player_img)
                     if player2 in ladder.keys():
                         ladder_sound = mixer.Sound('audio/ladder_up.mp3')
                         ladder_sound.play()
-                        px2, py2 = move_player(2, ladder[player2] - player2, [px1, py1, px2, py2])
+                        px2, py2 = move_player(2, ladder[player2] - player2, [px1, py1, px2, py2], player_img)
                         ladder_up = True
                     else:
                         ladder_up = False
@@ -320,9 +329,11 @@ while game_state == "running":
         show_current_players(player_img, px1, py1, px2, py2)
     #  if player 1 has won
     elif player1_wins == True:
+        game_screen.blit(back_player, (100, 120))
         game_screen.blit(player1_wins_text, (100, 200))
     # if p
     else:
+        game_screen.blit(back_player, (100, 120))
         game_screen.blit(player2_wins_text, (100, 200))
 
     pygame.display.update()
