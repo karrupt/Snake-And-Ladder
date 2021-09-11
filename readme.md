@@ -7,13 +7,13 @@ This is your basic game of Snake and Ladder between two players.
 >Funtionalies of sound on snake bite, ladder up and winning game.
 ___
 ### Start View
-!["Game Start View"](images\game_view.png "As the Game starts")
+!["Game Start View"](https://github.com/proacher/Snake-And-Ladder/blob/main/images/game_view.png "As the Game starts")
 ___
 ### Snake Bite
-!["Snake Bite"](images\\snake_Bite.png "At 56 there was a snake so player 2 moves to 15")
+!["Snake Bite"](https://github.com/proacher/Snake-And-Ladder/blob/main/images/snake_Bite.png "At 56 there was a snake so player 2 moves to 15")
 ___
 ### Winning Moment
-!["Winning Moment"](images\Winning_moment.png "Player Two won and the game ends")
+!["Winning Moment"](https://github.com/proacher/Snake-And-Ladder/blob/main/images/Winning_moment.png "Player Two won and the game ends")
 ___
 
 Made By- 
