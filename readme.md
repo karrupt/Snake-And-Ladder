@@ -1,9 +1,26 @@
 # Snake-and-Ladder game
-This game is build using pygame module of python.
-This is under development, trying to use image processing module like pillow.
-***
-contributors to this repo are:
->Shushant gaur<br>
+This is a game which is build using pygame module of python.
+This is your basic game of Snake and Ladder between two players. 
+### Functionalities:
+>It shows the movement of the player from initial position to final position visually.
+>Easy to Track the player. 
+>Funtionalies of sound on snake bite, ladder up and winning game.
+___
+### Start View
+!["Game Start View"](images\game_view.png "As the Game starts")
+___
+### Snake Bite
+!["Snake Bite"](images\\snake_Bite.png "At 56 there was a snake so player 2 moves to 15")
+___
+### Winning Moment
+!["Winning Moment"](images\Winning_moment.png "Player Two won and the game ends")
+___
+
+Made By- 
+```python
+Shushant Gaur
+```
+Contributors to this repo are:
 >Shubham malik<br>
 >Tanuj bhatt<br>
 >Shailendra singh
