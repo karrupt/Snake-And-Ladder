@@ -10,7 +10,7 @@ ___
 !["Game Start View"](https://github.com/proacher/Snake-And-Ladder/blob/main/images/game_view.png "As the Game starts")
 ___
 ### Snake Bite
-!["Snake Bite"](https://github.com/proacher/Snake-And-Ladder/blob/main/images/snake_Bite.png "At 56 there was a snake so player 2 moves to 15")
+!["Snake Bite"]https://github.com/proacher/Snake-And-Ladder/blob/main/images/Snake_Bite.png "At 56 there was a snake so player 2 moves to 15")
 ___
 ### Winning Moment
 !["Winning Moment"](https://github.com/proacher/Snake-And-Ladder/blob/main/images/Winning_moment.png "Player Two won and the game ends")
